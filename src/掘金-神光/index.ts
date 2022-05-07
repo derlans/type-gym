@@ -47,3 +47,32 @@ type filterNumberKey<T extends object>= {
 }[keyof T]
 export type example5=filterNumberProp<{ a: 1; b: '2'; c: 3 }>
 export type example6=filterNumberKey<{ a: 1; b: '2'; c: 3 }>
+
+// 模式匹配
+type Pop<T extends unknown[]>=T extends [...infer Rest, infer Last] ? Last : never
+type example7=Pop<[1, 2, 3]>
+
+type TrimLeft<T extends string>=T extends `${' ' | '\t' | '\n'}${infer Rest}`
+  ? TrimLeft<Rest>
+  : T
+type example8=TrimLeft<' \t\n123 \t\n'>
+type TrimRight<T extends string>=T extends `${infer Rest}${' ' | '\t' | '\n'}`
+  ? TrimRight<Rest>
+  : T
+type example9=TrimRight<'123 \t\n'>
+type Trim<T extends string>=TrimLeft<TrimRight<T>>
+type example10=Trim<' \t\n123 \t\n'>
+
+type Replace<T extends string, R extends string, A extends string>=T extends `${infer FirstRest}${R}${infer LastRest}`
+  ? `${FirstRest}${A}${LastRest}`
+  : T
+type example11= Replace<'abcd1234', 'cd1', 'e'>
+
+type GetEnterAndReturnType<T extends (...args: any[]) => any>=T extends (...params: infer Params) => infer R
+  ? [Params, R]
+  : never
+type example12=GetEnterAndReturnType<(a: number, b: string) => string>
+
+// 匹配解析params
+// type ParseParams<T extends string>=T extends `${infer PrefixChar}${infer RestStr}`
+//   ? PrefixChar extends ''
